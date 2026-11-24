@@ -3,117 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResumeAI</title
+<title>ResumeAI</title>
 
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f6f8;
-  color:#111827
-}
-header{
-  background:#111827;
-  color:white;
-  text-align:center;
-  padding:25px 15px
-}
-header h1{margin:0;font-size:30px}
-header p{margin:8px 0 0;color:#d1d5db}
+body{margin:0;font-family:Arial;background:#f4f6f8;color:#111827}
+header{background:#111827;color:white;text-align:center;padding:25px}
 .container{max-width:700px;margin:auto;padding:20px}
-.card{
-  background:white;
-  padding:22px;
-  border-radius:15px;
-  box-shadow:0 4px 18px rgba(0,0,0,.08);
-  margin-bottom:20px
-}
-h2{text-align:center}
-label{
-  display:block;
-  font-weight:bold;
-  margin-top:15px;
-  margin-bottom:6px
-}
-input,textarea{
-  width:100%;
-  padding:12px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  font-size:16px
-}
-textarea{min-height:90px;resize:vertical}
-button{
-  width:100%;
-  border:0;
-  border-radius:9px;
-  padding:14px;
-  margin-top:20px;
-  font-size:17px;
-  font-weight:bold;
-  color:white;
-  background:#2563eb;
-  cursor:pointer
-}
-#resume{
-  display:none;
-  background:white;
-  padding:30px;
-  border-radius:12px;
-  margin-top:20px;
-  box-shadow:0 4px 18px rgba(0,0,0,.08)
-}
-#resume h1{margin:0 0 5px}
-#resume h3{
-  margin-top:22px;
-  border-bottom:2px solid #2563eb;
-  padding-bottom:5px
-}
-#resume p{
-  white-space:pre-line;
-  line-height:1.5
-}
-.download{
-  display:none;
-  background:#059669
-}
-.error{
-  color:#dc2626;
-  text-align:center;
-  margin-top:10px
-}
-@media print{
-  header,.card,.download{display:none!important}
-  #resume{display:block!important;box-shadow:none}
-  body{background:white}
-}
+.card,#resume{background:white;padding:22px;border-radius:15px;margin-bottom:20px}
+label{display:block;font-weight:bold;margin:15px 0 6px}
+input,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+textarea{min-height:90px}
+button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:8px;background:#2563eb;color:white;font-size:17px;font-weight:bold}
+#resume{display:none}
+#resume h3{border-bottom:2px solid #2563eb;padding-bottom:5px}
+#download{display:none;background:#059669}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>ResumeAI</h1>
-  <p>Create a professional resume in minutes</p>
+<h1>ResumeAI</h1>
+<p>Create your professional resume</p>
 </header>
 
 <div class="container">
 
 <div class="card">
-  <h2>Build Your Resume</h2>
+<h2>Build Your Resume</h2>
 
-  <label>Full Name</label>
-  <input id="name" placeholder="John Smith">
+<label>Full Name</label>
+<input id="name" placeholder="John Smith">
 
-  <label>Email</label>
-  <input id="email" placeholder="john@example.com">
+<label>Email</label>
+<input id="email" placeholder="john@example.com">
 
-  <label>Phone</label>
-  <input id="phone" placeholder="+1 123 456 7890">
+<label>Phone</label>
+<input id="phone" placeholder="+1 123 456 7890">
 
-  <label>Professional Summary</label>
-  <textarea id="summary" placeholder="Experienced professional..."></textarea>
+<label>Professional Summary</label>
+<textarea id="summary"></textarea>
 
-  <label>Skills</label>
-  <textarea id="skills" placeholder="Marketing, Sales, Communication
+<label>Skills</label>
+<textarea id="skills" placeholder="Marketing, Sales, Communication"></textarea>
+
+<label>Work Experience</label>
+<textarea id="experience"></textarea>
+
+<label>Education</label>
+<textarea id="education"></textarea>
+
+<button id="generate">Generate Resume</button>
+</div>
+
+<div id="resume">
+<h1 id="rName"></h1>
+<p id="rContact"></p>
+
+<h3>Professional Summary</h3>
+<p id="rSummary"></p>
+
+<h3>Skills</h3>
+<p id="rSkills"></p>
+
+<h3>Experience</h3>
+<p id="rExperience"></p>
+
+<h3>Education</h3>
+<p id="rEducation"></p>
+</div>
+
+<button id="download">Download / Print Resume</button>
+
+</div>
+
+<script>
+document.getElementById("generate").onclick=function(){
+
+let name=document.getElementById("name").value.trim();
+
+if(!name){
+alert("Please enter your name");
+return;
+}
+
+document.getElementById("rName").textContent=name;
+
+document.getElementById("rContact").textContent=
+document.getElementById("email").value+" | "+
+document.getElementById("phone").value;
+
+document.getElementById("rSummary").textContent=
+document.getElementById("summary").value;
+
+document.getElementById("rSkills").textContent=
+document.getElementById("skills").value;
+
+document.getElementById("rExperience").textContent=
+document.getElementById("experience").value;
+
+document.getElementById("rEducation").textContent=
+document.getElementById("education").value;
+
+document.getElementById("resume").style.display="block";
+document.getElementById("download").style.display="block";
+
+document.getElementById("resume").scrollIntoView();
+};
+
+document.getElementById("download").onclick=function(){
+window.print();
+};
+</script>
+
+</body>
+</html>
