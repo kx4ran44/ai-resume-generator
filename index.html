@@ -79,39 +79,192 @@ button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:8px;backgr
 </div>
 
 <script>
-document.getElementById("generate").onclick=function(){
+document.getElementById("generate").onclick = async function () {
+  const button = document.getElementById("generate");
 
-let name=document.getElementById("name").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const summary = document.getElementById("summary").value.trim();
+  const skills = document.getElementById("skills").value.trim();
+  const experience = document.getElementById("experience").value.trim();
+  const education = document.getElementById("education").value.trim();
 
-if(!name){
-alert("Please enter your name");
-return;
-}
+  if (!name) {
+    alert("Please enter your name");
+    return;
+  }
 
-document.getElementById("rName").textContent=name;
+  if (!summary && !skills && !experience && !education) {
+    alert("Please enter some resume information first");
+    return;
+  }
 
-document.getElementById("rContact").textContent=
-document.getElementById("email").value+" | "+
-document.getElementById("phone").value;
+  button.disabled = true;
+  button.textContent = "Generating with AI...";
 
-document.getElementById("rSummary").textContent=
-document.getElementById("summary").value;
+  const prompt = `
+Create an ATS-friendly professional resume using ONLY the information provided below.
+Do not invent employers, qualifications, education, achievements, dates, skills, or experience.
 
-document.getElementById("rSkills").textContent=
-document.getElementById("skills").value;
+Name: ${name}
+Professional Summary: ${summary}
+Skills: ${skills}
+Work Experience: ${experience}
+Education: ${education}
 
-document.getElementById("rExperience").textContent=
-document.getElementById("experience").value;
+Return ONLY these four sections using exactly these headings:
 
-document.getElementById("rEducation").textContent=
-document.getElementById("education").value;
+SUMMARY:
+Write an improved professional summary.
 
-document.getElementById("resume").style.display="block";
-document.getElementById("download").style.display="block";
+SKILLS:
+Improve and organize only the skills provided.
 
-document.getElementById("resume").scrollIntoView();
+EXPERIENCE:
+Professionally rewrite only the experience provided.
+
+EDUCATION:
+Professionally format only the education provided.
+`;
+
+  try {
+    const response = await fetch(
+      "https://resume-ai-chat.kx4ran44.workers.dev/api/chat",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messages: [{
+            role: "user",
+            content: prompt
+          }]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("AI request failed");
+    }
+
+    if (!response.body) {
+      throw new Error("No AI response");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let buffer = "";
+    let aiText = "";
+
+    while (true) {
+      const result = await reader.read();
+
+      if (result.done) break;
+
+      buffer += decoder.decode(result.value, { stream: true });
+
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const cleanLine = line.trim();
+
+        if (!cleanLine.startsWith("data:")) continue;
+
+        const data = cleanLine.slice(5).trim();
+
+        if (!data || data === "[DONE]") continue;
+
+        try {
+          const parsed = JSON.parse(data);
+
+          if (typeof parsed.response === "string") {
+            aiText += parsed.response;
+          }
+        } catch (e) {}
+      }
+    }
+
+    if (buffer.trim().startsWith("data:")) {
+      const data = buffer.trim().slice(5).trim();
+
+      if (data && data !== "[DONE]") {
+        try {
+          const parsed = JSON.parse(data);
+
+          if (typeof parsed.response === "string") {
+            aiText += parsed.response;
+          }
+        } catch (e) {}
+      }
+    }
+
+    aiText = aiText.trim();
+
+    if (!aiText) {
+      throw new Error("Empty AI response");
+    }
+
+    function getSection(start, end) {
+      const startIndex = aiText.indexOf(start);
+
+      if (startIndex === -1) return "";
+
+      const contentStart = startIndex + start.length;
+
+      if (!end) {
+        return aiText.slice(contentStart).trim();
+      }
+
+      const endIndex = aiText.indexOf(end, contentStart);
+
+      if (endIndex === -1) {
+        return aiText.slice(contentStart).trim();
+      }
+
+      return aiText.slice(contentStart, endIndex).trim();
+    }
+
+    const aiSummary =
+      getSection("SUMMARY:", "SKILLS:") || summary;
+
+    const aiSkills =
+      getSection("SKILLS:", "EXPERIENCE:") || skills;
+
+    const aiExperience =
+      getSection("EXPERIENCE:", "EDUCATION:") || experience;
+
+    const aiEducation =
+      getSection("EDUCATION:", null) || education;
+
+    document.getElementById("rName").textContent = name;
+
+    document.getElementById("rContact").textContent =
+      [email, phone].filter(Boolean).join(" | ");
+
+    document.getElementById("rSummary").textContent = aiSummary;
+    document.getElementById("rSkills").textContent = aiSkills;
+    document.getElementById("rExperience").textContent = aiExperience;
+    document.getElementById("rEducation").textContent = aiEducation;
+
+    document.getElementById("resume").style.display = "block";
+    document.getElementById("download").style.display = "block";
+
+    document.getElementById("resume").scrollIntoView({
+      behavior: "smooth"
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert("AI generation failed. Please try again.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Generate Resume";
+  }
 };
-
 document.getElementById("download").onclick=function(){
 window.print();
 };
