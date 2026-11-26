@@ -18,6 +18,42 @@ button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:8px;backgr
 #resume{display:none}
 #resume h3{border-bottom:2px solid #2563eb;padding-bottom:5px}
 #download{display:none;background:#059669}
+  .pricing{
+  max-width:700px;
+  margin:25px auto;
+  padding:20px;
+  text-align:center;
+}
+
+.pricing > h2{
+  margin-bottom:20px;
+}
+
+.plan{
+  background:white;
+  padding:22px;
+  margin:15px 0;
+  border-radius:15px;
+  box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+.plan h2{
+  font-size:32px;
+  margin:10px 0;
+}
+
+.plan p{
+  margin:10px 0;
+}
+
+.plan.pro{
+  border:2px solid #2563eb;
+}
+
+#upgrade{
+  background:#2563eb;
+  margin-top:15px;
+}
 </style>
 </head>
 
@@ -27,7 +63,29 @@ button{width:100%;padding:14px;margin-top:20px;border:0;border-radius:8px;backgr
 <h1>ResumeAI</h1>
 <p>Create your professional resume</p>
 </header>
+<section class="pricing">
+  <h2>Choose Your Plan</h2>
 
+  <div class="plan">
+    <h3>Free</h3>
+    <h2>$0</h2>
+    <p>✓ 1 AI Resume</p>
+    <p>✓ AI-powered writing</p>
+    <p>✓ PDF download</p>
+  </div>
+
+  <div class="plan pro">
+    <h3>Pro</h3>
+    <h2>$4.99</h2>
+    <p>✓ More AI Resume Generations</p>
+    <p>✓ Premium Resume Templates</p>
+    <p>✓ PDF Downloads</p>
+
+    <button type="button" id="upgrade">
+      Upgrade to Pro
+    </button>
+  </div>
+</section>
 <div class="container">
 
 <div class="card">
