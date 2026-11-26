@@ -326,6 +326,19 @@ Professionally format only the education provided.
 document.getElementById("download").onclick=function(){
 window.print();
 };
+document.getElementById("upgrade").onclick = function () {
+  const upiId = "Your upi id ";
+  const amount = "399";
+  const name = "ResumeAI Pro";
+
+  const upiLink =
+    "upi://pay?pa=" + encodeURIComponent(upiId) +
+    "&pn=" + encodeURIComponent(name) +
+    "&am=" + amount +
+    "&cu=INR";
+
+  window.location.href = upiLink;
+};
 </script>
 
 </body>
